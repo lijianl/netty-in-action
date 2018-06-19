@@ -12,10 +12,22 @@ import java.nio.charset.Charset;
  * @author <a href="mailto:norman.maurer@gmail.com">Norman Maurer</a>
  */
 public class PlainOioServer {
+
+
+    /**
+     * 阻塞IO
+     * @param port
+     * @throws IOException
+     */
     public void serve(int port) throws IOException {
+
+
         final ServerSocket socket = new ServerSocket(port);
+
         try {
             for(;;) {
+
+
                 final Socket clientSocket = socket.accept();
                 System.out.println(
                         "Accepted connection from " + clientSocket);
@@ -45,4 +57,6 @@ public class PlainOioServer {
             e.printStackTrace();
         }
     }
+
+
 }

@@ -12,15 +12,25 @@ import io.netty.util.CharsetUtil;
  *
  * @author <a href="mailto:norman.maurer@gmail.com">Norman Maurer</a>
  */
+
+
 @Sharable
-public class EchoClientHandler
-    extends SimpleChannelInboundHandler<ByteBuf> {
+public class EchoClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
+
+
+    /**
+     * channle 成功链接服务器
+     * @param ctx
+     */
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         ctx.writeAndFlush(Unpooled.copiedBuffer("Netty rocks!",
                 CharsetUtil.UTF_8));
     }
 
+    /**
+     * SimpleChannelInboundHandler  自动释放 ByteBuf 的引用
+     */
     @Override
     public void channelRead0(ChannelHandlerContext ctx, ByteBuf in) {
         System.out.println(

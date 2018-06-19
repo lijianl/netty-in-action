@@ -18,6 +18,7 @@ import java.net.InetSocketAddress;
 public class EchoServer {
     private final int port;
 
+
     public EchoServer(int port) {
         this.port = port;
     }
@@ -35,6 +36,7 @@ public class EchoServer {
     }
 
     public void start() throws Exception {
+
         final EchoServerHandler serverHandler = new EchoServerHandler();
         EventLoopGroup group = new NioEventLoopGroup();
         try {
@@ -49,10 +51,21 @@ public class EchoServer {
                     }
                 });
 
+
+            /**
+             * .sync() 阻塞绑定知道完成
+             */
             ChannelFuture f = b.bind().sync();
+
             System.out.println(EchoServer.class.getName() +
                 " started and listening for connections on " + f.channel().localAddress());
+
+            /**
+             *  阻塞到channel 完成
+             */
             f.channel().closeFuture().sync();
+
+
         } finally {
             group.shutdownGracefully().sync();
         }

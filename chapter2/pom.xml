@@ -12,10 +12,12 @@
 
     <artifactId>chapter2</artifactId>
     <packaging>pom</packaging>
+
     <name>Chapter 2. Your First Netty Application - Echo App</name>
     <description>
         Build an Echo Server and Client
     </description>
+
 
     <modules>
         <module>Client</module>
@@ -26,6 +28,8 @@
         <echo-server.hostname>localhost</echo-server.hostname>
         <echo-server.port>8888</echo-server.port>
     </properties>
+
+
 
     <build>
         <plugins>
@@ -44,5 +48,7 @@
             </plugin>
         </plugins>
     </build>
+
+
 
 </project>

@@ -12,39 +12,54 @@ import java.nio.charset.Charset;
 
 /**
  * Created by kerr.
- *
+ * <p>
  * Listing 1.3 Asynchronous connect
- *
+ * <p>
  * Listing 1.4 Callback in action
  */
 public class ConnectExample {
+
     private static final Channel CHANNEL_FROM_SOMEWHERE = new NioSocketChannel();
 
     /**
      * Listing 1.3 Asynchronous connect
-     *
+     * <p>
      * Listing 1.4 Callback in action
-     * */
+     */
     public static void connect() {
+
         Channel channel = CHANNEL_FROM_SOMEWHERE; //reference form somewhere
-        // Does not block
+
+
+        /**
+         * 客户端链接服务器，此处不阻塞(ChannelFuture)
+         */
         ChannelFuture future = channel.connect(
                 new InetSocketAddress("192.168.0.1", 25));
+
+
+        /**
+         * ChannelFuture 增加监听回调函数
+         */
         future.addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) {
                 if (future.isSuccess()) {
+
                     ByteBuf buffer = Unpooled.copiedBuffer(
                             "Hello", Charset.defaultCharset());
                     ChannelFuture wf = future.channel()
                             .writeAndFlush(buffer);
                     // ...
                 } else {
+
                     Throwable cause = future.cause();
                     cause.printStackTrace();
+
                 }
             }
         });
+
 
     }
 }

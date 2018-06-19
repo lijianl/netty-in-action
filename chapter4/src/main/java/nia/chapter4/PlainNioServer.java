@@ -17,39 +17,74 @@ import java.util.Set;
  * @author <a href="mailto:norman.maurer@gmail.com">Norman Maurer</a>
  */
 public class PlainNioServer {
+
+
+    /**
+     * 非阻塞, selector监听
+     */
     public void serve(int port) throws IOException {
+
+
+        /**
+         * server 监听channel
+         */
         ServerSocketChannel serverChannel = ServerSocketChannel.open();
         serverChannel.configureBlocking(false);
         ServerSocket ss = serverChannel.socket();
         InetSocketAddress address = new InetSocketAddress(port);
         ss.bind(address);
+
+        /**
+         * Selector 网络Io, 注册服务器
+         */
         Selector selector = Selector.open();
         serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+
         final ByteBuffer msg = ByteBuffer.wrap("Hi!\r\n".getBytes());
-        for (;;){
+
+
+        for (; ; ) {
             try {
+                /**
+                 * 阻塞直到selector一个事件就绪
+                 */
                 selector.select();
+
             } catch (IOException ex) {
                 ex.printStackTrace();
                 //handle exception
                 break;
             }
+
             Set<SelectionKey> readyKeys = selector.selectedKeys();
             Iterator<SelectionKey> iterator = readyKeys.iterator();
             while (iterator.hasNext()) {
+
                 SelectionKey key = iterator.next();
                 iterator.remove();
+
                 try {
+
+                    /**
+                     * 监听事件
+                     */
                     if (key.isAcceptable()) {
+
                         ServerSocketChannel server =
                                 (ServerSocketChannel) key.channel();
                         SocketChannel client = server.accept();
                         client.configureBlocking(false);
+                        // 注册客户端
                         client.register(selector, SelectionKey.OP_WRITE |
                                 SelectionKey.OP_READ, msg.duplicate());
+
                         System.out.println(
                                 "Accepted connection from " + client);
                     }
+
+                    /**
+                     * 写事件
+                     */
                     if (key.isWritable()) {
                         SocketChannel client =
                                 (SocketChannel) key.channel();
@@ -62,6 +97,7 @@ public class PlainNioServer {
                         }
                         client.close();
                     }
+
                 } catch (IOException ex) {
                     key.cancel();
                     try {
