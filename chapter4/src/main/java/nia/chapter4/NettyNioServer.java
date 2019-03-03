@@ -18,9 +18,7 @@ import java.nio.charset.Charset;
  */
 public class NettyNioServer {
     public void server(int port) throws Exception {
-        final ByteBuf buf =
-                Unpooled.unreleasableBuffer(Unpooled.copiedBuffer("Hi!\r\n",
-                        Charset.forName("UTF-8")));
+        final ByteBuf buf = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer("Hi!\r\n", Charset.forName("UTF-8")));
         NioEventLoopGroup group = new NioEventLoopGroup();
         try {
             ServerBootstrap b = new ServerBootstrap();
@@ -30,12 +28,12 @@ public class NettyNioServer {
                                       @Override
                                       public void initChannel(SocketChannel ch)
                                               throws Exception {
-                                              ch.pipeline().addLast(
+                                          ch.pipeline().addLast(
                                                   new ChannelInboundHandlerAdapter() {
                                                       @Override
                                                       public void channelActive(
                                                               ChannelHandlerContext ctx) throws Exception {
-                                                                ctx.writeAndFlush(buf.duplicate())
+                                                          ctx.writeAndFlush(buf.duplicate())
                                                                   .addListener(
                                                                           ChannelFutureListener.CLOSE);
                                                       }

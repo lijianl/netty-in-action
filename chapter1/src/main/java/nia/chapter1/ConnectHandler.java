@@ -12,10 +12,14 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
  * 􏶴
  */
 public class ConnectHandler extends ChannelInboundHandlerAdapter {
+
+    /**
+     * channel 建立是回调
+     */
     @Override
     public void channelActive(ChannelHandlerContext ctx)
             throws Exception {
         System.out.println(
-                "Client " + ctx.channel().remoteAddress() + " connected");
+                "Client IP " + ctx.channel().remoteAddress() + " connected");
     }
 }

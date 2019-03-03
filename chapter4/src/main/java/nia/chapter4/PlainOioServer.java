@@ -16,8 +16,6 @@ public class PlainOioServer {
 
     /**
      * 阻塞IO
-     * @param port
-     * @throws IOException
      */
     public void serve(int port) throws IOException {
 
@@ -25,9 +23,7 @@ public class PlainOioServer {
         final ServerSocket socket = new ServerSocket(port);
 
         try {
-            for(;;) {
-
-
+            for (; ; ) {
                 final Socket clientSocket = socket.accept();
                 System.out.println(
                         "Accepted connection from " + clientSocket);
@@ -45,6 +41,7 @@ public class PlainOioServer {
                             e.printStackTrace();
                         } finally {
                             try {
+                                // 关系网络IO
                                 clientSocket.close();
                             } catch (IOException ex) {
                                 // ignore on close

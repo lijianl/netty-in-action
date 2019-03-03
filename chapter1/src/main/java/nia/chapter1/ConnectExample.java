@@ -42,24 +42,33 @@ public class ConnectExample {
          * ChannelFuture 增加监听回调函数
          */
         future.addListener(new ChannelFutureListener() {
+
             @Override
             public void operationComplete(ChannelFuture future) {
+
+                /**
+                 * 链接成功:回调
+                 */
                 if (future.isSuccess()) {
 
                     ByteBuf buffer = Unpooled.copiedBuffer(
                             "Hello", Charset.defaultCharset());
+
+                    /***
+                     * 写IO操作也不会阻塞,此处依然可以增加Listner
+                     */
                     ChannelFuture wf = future.channel()
                             .writeAndFlush(buffer);
-                    // ...
                 } else {
-
+                    /**
+                     * 链接异常
+                     */
                     Throwable cause = future.cause();
                     cause.printStackTrace();
 
                 }
             }
         });
-
 
     }
 }

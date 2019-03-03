@@ -16,17 +16,24 @@ import io.netty.util.CharsetUtil;
 
 
 /**
- * 共享实例
+ * 多个线程共享单个实例
+ * <p>
+ * <p>
+ * !!!!!!服务端使用这个!!!!!!!!
  */
-
 @Sharable
 public class EchoServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
+
         ByteBuf in = (ByteBuf) msg;
         System.out.println(
                 "Server received: " + in.toString(CharsetUtil.UTF_8));
+
+        /**
+         * NIO的 =>不阻塞
+         */
         ctx.write(in);
 
         /**
@@ -42,6 +49,10 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx)
             throws Exception {
+
+        /**
+         * 读完成并释放空间
+         */
         ctx.writeAndFlush(Unpooled.EMPTY_BUFFER)
                 .addListener(ChannelFutureListener.CLOSE);
     }
@@ -49,9 +60,6 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
 
     /**
      * 出现异常, 关闭channel
-     *
-     * @param ctx
-     * @param cause
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx,

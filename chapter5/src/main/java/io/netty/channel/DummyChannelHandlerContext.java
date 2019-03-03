@@ -6,6 +6,7 @@ import io.netty.util.concurrent.EventExecutor;
  * Created by kerr.
  */
 public class DummyChannelHandlerContext extends AbstractChannelHandlerContext {
+
     public static ChannelHandlerContext DUMMY_INSTANCE = new DummyChannelHandlerContext(
             null,
             null,
@@ -13,6 +14,7 @@ public class DummyChannelHandlerContext extends AbstractChannelHandlerContext {
             true,
             true
     );
+
     public DummyChannelHandlerContext(DefaultChannelPipeline pipeline,
                                       EventExecutor executor,
                                       String name, boolean inbound, boolean outbound) {

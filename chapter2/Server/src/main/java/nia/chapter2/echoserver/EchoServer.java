@@ -24,10 +24,10 @@ public class EchoServer {
     }
 
     public static void main(String[] args)
-        throws Exception {
+            throws Exception {
         if (args.length != 1) {
             System.err.println("Usage: " + EchoServer.class.getSimpleName() +
-                " <port>"
+                    " <port>"
             );
             return;
         }
@@ -35,33 +35,35 @@ public class EchoServer {
         new EchoServer(port).start();
     }
 
+
     public void start() throws Exception {
 
         final EchoServerHandler serverHandler = new EchoServerHandler();
+
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(group)
-                .channel(NioServerSocketChannel.class)
-                .localAddress(new InetSocketAddress(port))
-                .childHandler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    public void initChannel(SocketChannel ch) throws Exception {
-                        ch.pipeline().addLast(serverHandler);
-                    }
-                });
+                    .channel(NioServerSocketChannel.class)
+                    .localAddress(new InetSocketAddress(port))
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        public void initChannel(SocketChannel ch) throws Exception {
+                            ch.pipeline().addLast(serverHandler);
+                        }
+                    });
 
 
             /**
-             * .sync() 阻塞绑定知道完成
+             * 绑定同步:.sync()阻塞绑定直到完成
              */
             ChannelFuture f = b.bind().sync();
 
             System.out.println(EchoServer.class.getName() +
-                " started and listening for connections on " + f.channel().localAddress());
+                    " started and listening for connections on " + f.channel().localAddress());
 
             /**
-             *  阻塞到channel 完成
+             *  关闭同步:阻塞到channel完成
              */
             f.channel().closeFuture().sync();
 

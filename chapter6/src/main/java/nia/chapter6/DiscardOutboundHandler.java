@@ -17,7 +17,9 @@ public class DiscardOutboundHandler
     @Override
     public void write(ChannelHandlerContext ctx,
         Object msg, ChannelPromise promise) {
+        // 丢弃消息
         ReferenceCountUtil.release(msg);
+        // 标记消息已经处理
         promise.setSuccess();
     }
 }

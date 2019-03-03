@@ -24,6 +24,7 @@ public class WriteHandlers {
 
     /**
      * Listing 6.6 Accessing the Channel from a ChannelHandlerContext
+     *
      * */
     public static void writeViaChannel() {
         ChannelHandlerContext ctx = CHANNEL_HANDLER_CONTEXT_FROM_SOMEWHERE; //get reference form somewhere
