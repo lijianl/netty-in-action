@@ -15,13 +15,20 @@ public class ModifyChannelPipeline {
 
     /**
      * Listing 6.5 Modify the ChannelPipeline
+     * 对ChannelPipeline修改
      * */
     public static void modifyPipeline() {
-        ChannelPipeline pipeline = CHANNEL_PIPELINE_FROM_SOMEWHERE; // get reference to pipeline;
+
+
+        // get reference to pipeline;
+        ChannelPipeline pipeline = CHANNEL_PIPELINE_FROM_SOMEWHERE;
+
         FirstHandler firstHandler = new FirstHandler();
+
         pipeline.addLast("handler1", firstHandler);
         pipeline.addFirst("handler2", new SecondHandler());
         pipeline.addLast("handler3", new ThirdHandler());
+
         //...
         pipeline.remove("handler3");
         pipeline.remove(firstHandler);
@@ -29,23 +36,11 @@ public class ModifyChannelPipeline {
 
     }
 
-    private static final class FirstHandler
-        extends ChannelHandlerAdapter {
+    private static final class FirstHandler extends ChannelHandlerAdapter { }
 
-    }
+    private static final class SecondHandler extends ChannelHandlerAdapter { }
 
-    private static final class SecondHandler
-        extends ChannelHandlerAdapter {
+    private static final class ThirdHandler extends ChannelHandlerAdapter {}
 
-    }
-
-    private static final class ThirdHandler
-        extends ChannelHandlerAdapter {
-
-    }
-
-    private static final class FourthHandler
-        extends ChannelHandlerAdapter {
-
-    }
+    private static final class FourthHandler extends ChannelHandlerAdapter { }
 }

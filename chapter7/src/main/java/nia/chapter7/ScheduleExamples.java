@@ -19,29 +19,40 @@ import java.util.concurrent.TimeUnit;
  *
  * @author <a href="mailto:norman.maurer@gmail.com">Norman Maurer</a>
  */
+
+
+
 public class ScheduleExamples {
     private static final Channel CHANNEL_FROM_SOMEWHERE = new NioSocketChannel();
 
     /**
      * Listing 7.2 Scheduling a task with a ScheduledExecutorService
+     *
+     * JDK 任务调度
      * */
     public static void schedule() {
-        ScheduledExecutorService executor =
-                Executors.newScheduledThreadPool(10);
 
-        ScheduledFuture<?> future = executor.schedule(
-            new Runnable() {
+
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(10);
+
+        // 任务延迟调度/任务周期调度
+        ScheduledFuture<?> future = executor.schedule(new Runnable() {
             @Override
             public void run() {
                 System.out.println("Now it is 60 seconds later");
             }
         }, 60, TimeUnit.SECONDS);
-        //...
+
+
+        //...任务完成，关闭线程，释放资源，不再接受任务
         executor.shutdown();
     }
 
     /**
      * Listing 7.3 Scheduling a task with EventLoop
+     *
+     *  使用EventLoop延时任务调度
+     *
      * */
     public static void scheduleViaEventLoop() {
         Channel ch = CHANNEL_FROM_SOMEWHERE; // get reference from somewhere
@@ -56,6 +67,7 @@ public class ScheduleExamples {
 
     /**
      * Listing 7.4 Scheduling a recurring task with EventLoop
+     * 使用EventLoop实现的周期任务调度
      * */
     public static void scheduleFixedViaEventLoop() {
         Channel ch = CHANNEL_FROM_SOMEWHERE; // get reference from somewhere
@@ -70,6 +82,9 @@ public class ScheduleExamples {
 
     /**
      * Listing 7.5 Canceling a task using ScheduledFuture
+     *
+     * 周期任务调度的取消
+     *
      * */
     public static void cancelingTaskUsingScheduledFuture(){
         Channel ch = CHANNEL_FROM_SOMEWHERE; // get reference from somewhere

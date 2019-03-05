@@ -11,11 +11,13 @@ import java.util.List;
  *
  * @author <a href="mailto:norman.maurer@gmail.com">Norman Maurer</a>
  */
-public class AbsIntegerEncoder extends
-    MessageToMessageEncoder<ByteBuf> {
+public class AbsIntegerEncoder extends MessageToMessageEncoder<ByteBuf> {
+
+    // 绝对值编码
     @Override
-    protected void encode(ChannelHandlerContext channelHandlerContext,
-        ByteBuf in, List<Object> out) throws Exception {
+    protected void encode(ChannelHandlerContext channelHandlerContext, ByteBuf in, List<Object> out) throws Exception {
+
+        // 绝对值计算
         while (in.readableBytes() >= 4) {
             int value = Math.abs(in.readInt());
             out.add(value);

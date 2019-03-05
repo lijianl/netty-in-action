@@ -33,6 +33,12 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 
+
+        <!--guava-->
+        <guava.version>27.0.1-jre</guava.version>
+        <commons-lang3.verion>3.8.1</commons-lang3.verion>
+
+
     </properties>
 
 
@@ -57,6 +63,20 @@
                 <version>${junit.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.verion}</version>
+            </dependency>
+
+
         </dependencies>
     </dependencyManagement>
 
@@ -78,13 +98,23 @@
             <artifactId>junit</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+
     </dependencies>
 
 
     <build>
         <pluginManagement>
-            <plugins>
 
+            <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -94,6 +124,7 @@
                         <target>1.8</target>
                     </configuration>
                 </plugin>
+
 
                 <plugin>
                     <artifactId>maven-clean-plugin</artifactId>
@@ -110,12 +141,15 @@
                     <version>2.18.1</version>
                 </plugin>
 
+
+                <!--??jar-->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>2.6</version>
                 </plugin>
 
+                <!--???jar-->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>

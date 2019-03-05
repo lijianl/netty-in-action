@@ -10,10 +10,16 @@ import io.netty.util.ReferenceCountUtil;
  *
  * @author <a href="mailto:norman.maurer@gmail.com">Norman Maurer</a>
  */
+
+
+
 @Sharable
 public class DiscardInboundHandler extends ChannelInboundHandlerAdapter {
+
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        // 释放引用
         ReferenceCountUtil.release(msg);
     }
 }

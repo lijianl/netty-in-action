@@ -47,6 +47,12 @@ import static io.netty.channel.DummyChannelHandlerContext.DUMMY_INSTANCE;
  * <p>
  * Listing 5.16 Release reference-counted object
  */
+
+
+/**
+ *  Netty的数据结构:ByteBuf
+ *
+ */
 public class ByteBufExamples {
 
     private final static Random random = new Random();
@@ -56,11 +62,17 @@ public class ByteBufExamples {
 
     /**
      * Listing 5.1 Backing array
+     *
+     * 堆缓冲区:存储在JVM的堆中
+     *
      */
     public static void heapBuffer() {
+
+        // 非池化缓存(能快速分配和释放)
+        // 池化缓存:缓存复用,合理是时机释放
         ByteBuf heapBuf = BYTE_BUF_FROM_SOMEWHERE; //get reference form somewhere
 
-        // 堆内存: 直接再JVM
+        // 支撑数组,直接对堆内的数组处理
         if (heapBuf.hasArray()) {
             byte[] array = heapBuf.array();
             int offset = heapBuf.arrayOffset() + heapBuf.readerIndex();
@@ -71,13 +83,17 @@ public class ByteBufExamples {
 
     /**
      * Listing 5.2 Direct buffer data access
+     * 直接内存:不在JVM，不能被jdk垃圾回收
+     * jdk的本地调用分配 => 在计算机内存中
      */
     public static void directBuffer() {
+
         ByteBuf directBuf = BYTE_BUF_FROM_SOMEWHERE; //get reference form somewhere
-        //直接内存:
+        //直接内存: 计算机内存,不在堆
         if (!directBuf.hasArray()) {
             int length = directBuf.readableBytes();
             byte[] array = new byte[length];
+            // 复制到array
             directBuf.getBytes(directBuf.readerIndex(), array);
             handleArray(array, 0, length);
         }
@@ -85,14 +101,13 @@ public class ByteBufExamples {
 
     /**
      * Listing 5.3 Composite buffer pattern using ByteBuffer
+     * 合并:效率低
      */
     public static void byteBufferComposite(ByteBuffer header, ByteBuffer body) {
         // Use an array to hold the message parts
         ByteBuffer[] message = new ByteBuffer[]{header, body};
-
         // Create a new ByteBuffer and use copy to merge the header and body
-        ByteBuffer message2 =
-                ByteBuffer.allocate(header.remaining() + body.remaining());
+        ByteBuffer message2 = ByteBuffer.allocate(header.remaining() + body.remaining());
         message2.put(header);
         message2.put(body);
         message2.flip();
@@ -101,6 +116,7 @@ public class ByteBufExamples {
 
     /**
      * Listing 5.4 Composite buffer pattern using CompositeByteBuf
+     * 复合缓冲区:能同时管理堆内存和直接内存，逻辑实现
      */
     public static void byteBufComposite() {
         CompositeByteBuf messageBuf = Unpooled.compositeBuffer();
@@ -116,6 +132,7 @@ public class ByteBufExamples {
 
     /**
      * Listing 5.5 Accessing the data in a CompositeByteBuf
+     * 支持操作类似直接缓存
      */
     public static void byteBufCompositeArray() {
         CompositeByteBuf compBuf = Unpooled.compositeBuffer();
@@ -127,6 +144,8 @@ public class ByteBufExamples {
 
     /**
      * Listing 5.6 Access data
+     * 随机访问，不会改变readIndex,writeIndex
+     * read(),write()会改变readIndex,writeIndex
      */
     public static void byteBufRelativeAccess() {
         ByteBuf buffer = BYTE_BUF_FROM_SOMEWHERE; //get reference form somewhere
@@ -138,6 +157,7 @@ public class ByteBufExamples {
 
     /**
      * Listing 5.7 Read all data
+     * 读数据
      */
     public static void readAllData() {
         ByteBuf buffer = BYTE_BUF_FROM_SOMEWHERE; //get reference form somewhere
@@ -148,6 +168,7 @@ public class ByteBufExamples {
 
     /**
      * Listing 5.8 Write data
+     * 写数据
      */
     public static void write() {
         // Fills the writable bytes of a buffer with random integers.
@@ -161,6 +182,7 @@ public class ByteBufExamples {
      * Listing 5.9 Using ByteProcessor to find \r
      * <p>
      * use {@link io.netty.buffer.ByteBufProcessor in Netty 4.0.x}
+     * 查找指定的byte
      */
     public static void byteProcessor() {
         ByteBuf buffer = BYTE_BUF_FROM_SOMEWHERE; //get reference form somewhere
@@ -179,10 +201,12 @@ public class ByteBufExamples {
 
     /**
      * Listing 5.10 Slice a ByteBuf
+     * 缓存分片
      */
     public static void byteBufSlice() {
         Charset utf8 = Charset.forName("UTF-8");
         ByteBuf buf = Unpooled.copiedBuffer("Netty in Action rocks!", utf8);
+        // 指向相同的缓存
         ByteBuf sliced = buf.slice(0, 15);
         System.out.println(sliced.toString(utf8));
         buf.setByte(0, (byte) 'J');
@@ -191,10 +215,12 @@ public class ByteBufExamples {
 
     /**
      * Listing 5.11 Copying a ByteBuf
+     * 缓存复制
      */
     public static void byteBufCopy() {
         Charset utf8 = Charset.forName("UTF-8");
         ByteBuf buf = Unpooled.copiedBuffer("Netty in Action rocks!", utf8);
+        // 新建缓存，并复制
         ByteBuf copy = buf.copy(0, 15);
         System.out.println(copy.toString(utf8));
         buf.setByte(0, (byte) 'J');
@@ -203,30 +229,44 @@ public class ByteBufExamples {
 
     /**
      * Listing 5.12 get() and set() usage
+     *
+     * get/set
      */
     public static void byteBufSetGet() {
         Charset utf8 = Charset.forName("UTF-8");
         ByteBuf buf = Unpooled.copiedBuffer("Netty in Action rocks!", utf8);
+
+        // N
         System.out.println((char) buf.getByte(0));
+        // 保存索引的位置
         int readerIndex = buf.readerIndex();
         int writerIndex = buf.writerIndex();
         buf.setByte(0, (byte) 'B');
+        // B,不改变索引的位置
         System.out.println((char) buf.getByte(0));
+
+        // true
         assert readerIndex == buf.readerIndex();
         assert writerIndex == buf.writerIndex();
     }
 
     /**
      * Listing 5.13 read() and write() operations on the ByteBuf
+     * read/write
+     *
      */
     public static void byteBufWriteRead() {
         Charset utf8 = Charset.forName("UTF-8");
         ByteBuf buf = Unpooled.copiedBuffer("Netty in Action rocks!", utf8);
+        //N
         System.out.println((char) buf.readByte());
         int readerIndex = buf.readerIndex();
         int writerIndex = buf.writerIndex();
+        // ?
         buf.writeByte((byte) '?');
+        // true
         assert readerIndex == buf.readerIndex();
+        // true, 加1
         assert writerIndex != buf.writerIndex();
     }
 
@@ -235,11 +275,17 @@ public class ByteBufExamples {
 
     /**
      * Listing 5.14 Obtaining a ByteBufAllocator reference
+     *
+     * 池化的缓存分配工具->ByteBufAllocator
      */
     public static void obtainingByteBufAllocatorReference() {
+
+        // 从channel获取
         Channel channel = CHANNEL_FROM_SOMEWHERE; //get reference form somewhere
         ByteBufAllocator allocator = channel.alloc();
         //...
+
+        // 从ChannelHandlerContext获取
         ChannelHandlerContext ctx = CHANNEL_HANDLER_CONTEXT_FROM_SOMEWHERE; //get reference form somewhere
         ByteBufAllocator allocator2 = ctx.alloc();
         //...
@@ -247,6 +293,7 @@ public class ByteBufExamples {
 
     /**
      * Listing 5.15 Reference counting
+     *  缓存应用记数,操作池化的内存
      */
     public static void referenceCounting() {
         Channel channel = CHANNEL_FROM_SOMEWHERE; //get reference form somewhere
@@ -259,6 +306,7 @@ public class ByteBufExamples {
 
     /**
      * Listing 5.16 Release reference-counted object
+     * 减少引用记数
      */
     public static void releaseReferenceCountedObject() {
         ByteBuf buffer = BYTE_BUF_FROM_SOMEWHERE; //get reference form somewhere

@@ -21,24 +21,40 @@ public class BootstrapServer {
 
     /**
      * Listing 8.4 Bootstrapping a server
-     * */
+     * <p>
+     * <p>
+     * 服务器引导类
+     */
     public void bootstrap() {
+
+        // 异步线程池
         NioEventLoopGroup group = new NioEventLoopGroup();
+
+        // Server引导程序
         ServerBootstrap bootstrap = new ServerBootstrap();
-        bootstrap.group(group)
-            .channel(NioServerSocketChannel.class)
-            .childHandler(new SimpleChannelInboundHandler<ByteBuf>() {
-                @Override
-                protected void channelRead0(ChannelHandlerContext channelHandlerContext,
-                    ByteBuf byteBuf) throws Exception {
-                    System.out.println("Received data");
-                }
-            });
+
+        bootstrap
+                .group(group)
+                .channel(NioServerSocketChannel.class)
+                .childHandler(new SimpleChannelInboundHandler<ByteBuf>() {
+
+                    @Override
+                    protected void channelRead0(ChannelHandlerContext channelHandlerContext,
+                                                ByteBuf byteBuf) throws Exception {
+                        System.out.println("Received data");
+                    }
+                });
+
+
+        // 创建ServerChannel(负责接受链接时创建子Channel)
+
         ChannelFuture future = bootstrap.bind(new InetSocketAddress(8080));
+
+
         future.addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture channelFuture)
-                throws Exception {
+                    throws Exception {
                 if (channelFuture.isSuccess()) {
                     System.out.println("Server bound");
                 } else {

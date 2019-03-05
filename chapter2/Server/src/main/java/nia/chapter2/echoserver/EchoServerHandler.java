@@ -21,21 +21,30 @@ import io.netty.util.CharsetUtil;
  * <p>
  * !!!!!!服务端使用这个!!!!!!!!
  */
+
+
+/**
+ * 注意
+ * 1.ChannelInboundHandlerAdapter的继承关系
+ * 2.@Sharable:实现安全共享(应该是单例)? 实现的原理
+ */
 @Sharable
 public class EchoServerHandler extends ChannelInboundHandlerAdapter {
 
+
+    /***
+     * ChannelHandlerContext: 所有ChannelHandler共享的上下文环境
+     */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
 
         ByteBuf in = (ByteBuf) msg;
-        System.out.println(
-                "Server received: " + in.toString(CharsetUtil.UTF_8));
+        System.out.println("Server received: " + in.toString(CharsetUtil.UTF_8));
 
         /**
-         * NIO的 =>不阻塞
+         * NIO的 => 不阻塞,
          */
         ctx.write(in);
-
         /**
          * 哪个性能好
          * ctx.writeAndFlush(in);
@@ -47,24 +56,23 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
      * channelRead最后一次调用：把数据刷新的remote, 并 close Channel
      */
     @Override
-    public void channelReadComplete(ChannelHandlerContext ctx)
-            throws Exception {
-
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
         /**
          * 读完成并释放空间
+         * 1. 刷出到Client,并释放缓存
+         * 2. 关闭Channel
          */
-        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER)
-                .addListener(ChannelFutureListener.CLOSE);
+        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
     }
 
 
     /**
-     * 出现异常, 关闭channel
+     * 读取异常, 关闭channel
      */
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx,
-                                Throwable cause) {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         cause.printStackTrace();
+        // 关闭Channel,也可以重试建立链接(不同的异常处理方式)
         ctx.close();
     }
 }

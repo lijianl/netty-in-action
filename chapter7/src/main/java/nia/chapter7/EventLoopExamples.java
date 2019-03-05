@@ -8,9 +8,19 @@ import java.util.List;
  *
  * @author <a href="mailto:norman.maurer@gmail.com">Norman Maurer</a>
  */
+
+
+
 public class EventLoopExamples {
     /**
      * Listing 7.1 Executing tasks in an event loop
+     *
+     *
+     *
+     *
+     * 事件循环模型: readyEvents = 需要处理的任务
+     * 事件执行的顺序FIFO
+     *
      * */
     public static void executeTaskInEventLoop() {
         boolean terminated = true;
@@ -23,6 +33,11 @@ public class EventLoopExamples {
         }
     }
 
+
+    /**
+     * 任务列表
+     * @return
+     */
     private static final List<Runnable> blockUntilEventsReady() {
         return Collections.<Runnable>singletonList(new Runnable() {
             @Override

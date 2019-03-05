@@ -19,30 +19,37 @@ import java.nio.charset.Charset;
 public class NettyOioServer {
 
     public void server(int port) throws Exception {
+
         final ByteBuf buf = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer("Hi!\r\n", Charset.forName("UTF-8")));
+        // 阻塞线程
         EventLoopGroup group = new OioEventLoopGroup();
+
+
         try {
+
             ServerBootstrap b = new ServerBootstrap();
+
+            // 阻塞Channel
             b.group(group)
                     .channel(OioServerSocketChannel.class)
                     .localAddress(new InetSocketAddress(port))
-                    .childHandler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        public void initChannel(SocketChannel ch)
-                                throws Exception {
-                            ch.pipeline().addLast(
-                                    new ChannelInboundHandlerAdapter() {
-                                        @Override
-                                        public void channelActive(
-                                                ChannelHandlerContext ctx)
-                                                throws Exception {
-                                            ctx.writeAndFlush(buf.duplicate())
-                                                    .addListener(
-                                                            ChannelFutureListener.CLOSE);
+                    .childHandler(
+                            new ChannelInitializer<SocketChannel>() {
+                                @Override
+                                public void initChannel(SocketChannel ch) throws Exception {
+                                    ch.pipeline().addLast(
+                                            new ChannelInboundHandlerAdapter() {
+                                                @Override
+                                                public void channelActive(ChannelHandlerContext ctx) throws Exception {
+                                                    ctx.writeAndFlush(buf.duplicate())
+                                                            .addListener(ChannelFutureListener.CLOSE);
                                         }
                                     });
                         }
                     });
+
+
+            // 阻塞主线成
             ChannelFuture f = b.bind().sync();
             f.channel().closeFuture().sync();
         } finally {

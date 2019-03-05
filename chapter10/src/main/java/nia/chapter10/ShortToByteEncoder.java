@@ -13,6 +13,7 @@ public class ShortToByteEncoder extends MessageToByteEncoder<Short> {
     @Override
     public void encode(ChannelHandlerContext ctx, Short msg, ByteBuf out)
         throws Exception {
+        // 直接写
         out.writeShort(msg);
     }
 }

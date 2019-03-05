@@ -10,8 +10,9 @@ import java.util.List;
  *
  * @author <a href="mailto:norman.maurer@gmail.com">Norman Maurer</a>
  */
-public class IntegerToStringEncoder
-    extends MessageToMessageEncoder<Integer> {
+public class IntegerToStringEncoder extends MessageToMessageEncoder<Integer> {
+
+
     @Override
     public void encode(ChannelHandlerContext ctx, Integer msg,
         List<Object> out) throws Exception {

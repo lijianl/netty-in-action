@@ -11,13 +11,20 @@ import java.util.List;
  * Listing 10.4 TooLongFrameException
  *
  * @author <a href="mailto:norman.maurer@gmail.com">Norman Maurer</a>
+ *
+ *
+ * TooLongFrameException
+ *
  */
 
+
+// 缓存过大占用缓存
 public class SafeByteToMessageDecoder extends ByteToMessageDecoder {
+
     private static final int MAX_FRAME_SIZE = 1024;
+
     @Override
-    public void decode(ChannelHandlerContext ctx, ByteBuf in,
-        List<Object> out) throws Exception {
+    public void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
             int readable = in.readableBytes();
             if (readable > MAX_FRAME_SIZE) {
                 in.skipBytes(readable);

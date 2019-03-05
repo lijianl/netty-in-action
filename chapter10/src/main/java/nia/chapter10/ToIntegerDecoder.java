@@ -12,12 +12,17 @@ import java.util.List;
  * @author <a href="mailto:norman.maurer@gmail.com">Norman Maurer</a>
  */
 public class ToIntegerDecoder extends ByteToMessageDecoder {
+
+
     @Override
-    public void decode(ChannelHandlerContext ctx, ByteBuf in,
-        List<Object> out) throws Exception {
+    public void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+
+
         if (in.readableBytes() >= 4) {
             out.add(in.readInt());
         }
+
+
     }
 }
 

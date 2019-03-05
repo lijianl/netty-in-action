@@ -14,47 +14,63 @@ import static org.junit.Assert.*;
  * @author <a href="mailto:norman.maurer@gmail.com">Norman Maurer</a>
  */
 public class FixedLengthFrameDecoderTest {
+
+
+
     @Test
     public void testFramesDecoded() {
+
         ByteBuf buf = Unpooled.buffer();
         for (int i = 0; i < 9; i++) {
             buf.writeByte(i);
         }
         ByteBuf input = buf.duplicate();
-        EmbeddedChannel channel = new EmbeddedChannel(
-            new FixedLengthFrameDecoder(3));
-        // write bytes
+
+        // 3字节分割
+        EmbeddedChannel channel = new EmbeddedChannel(new FixedLengthFrameDecoder(3));
+
+
+        // write bytes，先写数据
         assertTrue(channel.writeInbound(input.retain()));
         assertTrue(channel.finish());
 
-        // read messages
+        // read messages，在读数据，判断三个字节
         ByteBuf read = (ByteBuf) channel.readInbound();
         assertEquals(buf.readSlice(3), read);
         read.release();
 
-        read = (ByteBuf) channel.readInbound();
-        assertEquals(buf.readSlice(3), read);
-        read.release();
 
         read = (ByteBuf) channel.readInbound();
         assertEquals(buf.readSlice(3), read);
         read.release();
 
+
+        read = (ByteBuf) channel.readInbound();
+        assertEquals(buf.readSlice(3), read);
+        read.release();
+
+        // null
         assertNull(channel.readInbound());
         buf.release();
     }
 
     @Test
     public void testFramesDecoded2() {
+
         ByteBuf buf = Unpooled.buffer();
         for (int i = 0; i < 9; i++) {
             buf.writeByte(i);
         }
         ByteBuf input = buf.duplicate();
 
-        EmbeddedChannel channel = new EmbeddedChannel(
-            new FixedLengthFrameDecoder(3));
+        EmbeddedChannel channel = new EmbeddedChannel(new FixedLengthFrameDecoder(3));
+
+
+
+        // System.out.println(input.readBytes(2));
+        // 写入失败的原因 => 读数据失败,所以不能写入?????
         assertFalse(channel.writeInbound(input.readBytes(2)));
+        //
         assertTrue(channel.writeInbound(input.readBytes(7)));
 
         assertTrue(channel.finish());

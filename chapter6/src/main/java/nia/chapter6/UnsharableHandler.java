@@ -9,9 +9,13 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
  *
  * @author <a href="mailto:norman.maurer@gmail.com">Norman Maurer</a>
  */
+
+// 可以共享
 @Sharable
 public class UnsharableHandler extends ChannelInboundHandlerAdapter {
 
+
+    // 实例属性不能保证线程共享 => 需要通过ThreadLocal实现
     private int count;
 
     @Override

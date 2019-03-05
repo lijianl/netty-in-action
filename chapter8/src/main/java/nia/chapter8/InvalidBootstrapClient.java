@@ -15,6 +15,10 @@ import java.net.InetSocketAddress;
  * Listing 8.3 Incompatible Channel and EventLoopGroup
  *
  * @author <a href="mailto:norman.maurer@gmail.com">Norman Maurer</a>
+ *
+ *
+ *
+ * 无效的引导类配置
  */
 public class InvalidBootstrapClient {
 
@@ -25,10 +29,16 @@ public class InvalidBootstrapClient {
 
     /**
      * Listing 8.3 Incompatible Channel and EventLoopGroup
+     *
+     *
+     *
      * */
     public void bootstrap() {
         EventLoopGroup group = new NioEventLoopGroup();
+
         Bootstrap bootstrap = new Bootstrap();
+
+        // 不兼容的线程池和chanel配置
         bootstrap.group(group).channel(OioSocketChannel.class)
             .handler(new SimpleChannelInboundHandler<ByteBuf>() {
                 @Override
@@ -37,9 +47,10 @@ public class InvalidBootstrapClient {
                     ByteBuf byteBuf) throws Exception {
                     System.out.println("Received data");
                 }
-             });
-        ChannelFuture future = bootstrap.connect(
-                new InetSocketAddress("www.manning.com", 80));
+
+            });
+
+        ChannelFuture future = bootstrap.connect(new InetSocketAddress("www.manning.com", 80));
         future.syncUninterruptibly();
     }
 }

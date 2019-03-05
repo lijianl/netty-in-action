@@ -9,13 +9,21 @@ import io.netty.channel.ChannelHandlerContext;
  *
  * @author <a href="mailto:norman.maurer@gmail.com">Norman Maurer</a>
  */
+
+
 public class WriteHandler extends ChannelHandlerAdapter {
+
+    // 缓存channel引用,不是线程安全的
     private ChannelHandlerContext ctx;
+
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) {
+        // 缓存channel引用
         this.ctx = ctx;
     }
     public void send(String msg) {
+
+        // 使用缓存的引用
         ctx.writeAndFlush(msg);
     }
 }

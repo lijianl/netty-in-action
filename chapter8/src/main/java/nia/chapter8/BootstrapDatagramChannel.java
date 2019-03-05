@@ -17,15 +17,22 @@ import java.net.InetSocketAddress;
  * @author <a href="mailto:norman.maurer@gmail.com">Norman Maurer</a>
  * @author <a href="mailto:mawolfthal@gmail.com">Marvin Wolfthal</a>
  */
+
+
+
 public class BootstrapDatagramChannel {
 
     /**
      * Listing 8.8 Using Bootstrap with DatagramChannel
+     *
+     *
      */
     public void bootstrap() {
+
         Bootstrap bootstrap = new Bootstrap();
-        bootstrap.group(new OioEventLoopGroup()).channel(
-            OioDatagramChannel.class).handler(
+
+        // UDP
+        bootstrap.group(new OioEventLoopGroup()).channel(OioDatagramChannel.class).handler(
             new SimpleChannelInboundHandler<DatagramPacket>() {
                 @Override
                 public void channelRead0(ChannelHandlerContext ctx,
@@ -34,7 +41,11 @@ public class BootstrapDatagramChannel {
                 }
             }
         );
+
+        // 链接:  UDP 基于无连接的协议
         ChannelFuture future = bootstrap.bind(new InetSocketAddress(0));
+
+        //
         future.addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture channelFuture)

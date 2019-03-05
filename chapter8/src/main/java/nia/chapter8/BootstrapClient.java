@@ -22,27 +22,38 @@ public class BootstrapClient {
 
     /**
      * Listing 8.1 Bootstrapping a client
-     * */
+     */
     public void bootstrap() {
+
+
+        // 公用的线程组
         EventLoopGroup group = new NioEventLoopGroup();
+
+        // 客户端引导类
         Bootstrap bootstrap = new Bootstrap();
+
+
+        // 配置
         bootstrap.group(group)
-            .channel(NioSocketChannel.class)
-            .handler(new SimpleChannelInboundHandler<ByteBuf>() {
-                @Override
-                protected void channelRead0(
-                    ChannelHandlerContext channelHandlerContext,
-                    ByteBuf byteBuf) throws Exception {
-                    System.out.println("Received data");
-                }
+                .channel(NioSocketChannel.class)
+                .handler(new SimpleChannelInboundHandler<ByteBuf>() {
+
+                    @Override
+                    protected void channelRead0(
+                            ChannelHandlerContext channelHandlerContext,
+                            ByteBuf byteBuf) throws Exception {
+                        System.out.println("Received data");
+                    }
                 });
-        ChannelFuture future =
-            bootstrap.connect(
-                    new InetSocketAddress("www.manning.com", 80));
+
+
+        // 创建并返回Channel
+        ChannelFuture future = bootstrap.connect(new InetSocketAddress("www.manning.com", 80));
+
+        // channel的回调处理
         future.addListener(new ChannelFutureListener() {
             @Override
-            public void operationComplete(ChannelFuture channelFuture)
-                throws Exception {
+            public void operationComplete(ChannelFuture channelFuture) throws Exception {
                 if (channelFuture.isSuccess()) {
                     System.out.println("Connection established");
                 } else {

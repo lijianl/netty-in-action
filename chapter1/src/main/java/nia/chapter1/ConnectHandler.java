@@ -11,15 +11,18 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
  * <p>
  * 􏶴
  */
+
+
+/**
+ * 回调接口的实现
+ */
 public class ConnectHandler extends ChannelInboundHandlerAdapter {
 
     /**
-     * channel 建立是回调
+     * channel建立是回调
      */
     @Override
-    public void channelActive(ChannelHandlerContext ctx)
-            throws Exception {
-        System.out.println(
-                "Client IP " + ctx.channel().remoteAddress() + " connected");
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("Client IP " + ctx.channel().remoteAddress() + " connected");
     }
 }

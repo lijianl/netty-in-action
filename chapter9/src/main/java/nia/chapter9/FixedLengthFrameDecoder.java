@@ -12,6 +12,10 @@ import java.util.List;
  * @author <a href="mailto:norman.maurer@gmail.com">Norman Maurer</a>
  */
 public class FixedLengthFrameDecoder extends ByteToMessageDecoder {
+
+
+
+    // 指定的长度
     private final int frameLength;
 
     public FixedLengthFrameDecoder(int frameLength) {
@@ -22,11 +26,17 @@ public class FixedLengthFrameDecoder extends ByteToMessageDecoder {
         this.frameLength = frameLength;
     }
 
+
+    // 定长解码
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf in,
-        List<Object> out) throws Exception {
-        while (in.readableBytes() >= frameLength) {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+
+
+        // 消息足够读
+        while  (in.readableBytes() >= frameLength) {
+            // 读取指定的长度的消息
             ByteBuf buf = in.readBytes(frameLength);
+            //
             out.add(buf);
         }
     }

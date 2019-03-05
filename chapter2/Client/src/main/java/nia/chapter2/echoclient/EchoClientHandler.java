@@ -14,32 +14,36 @@ import io.netty.util.CharsetUtil;
  */
 
 
+/**
+ * 建立时有ByteBuf缓存,自己实现了解码
+ *
+ */
 @Sharable
 public class EchoClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
 
     /**
-     * channle 成功链接服务器
+     * channle 成功链接服务器时,
      * @param ctx
      */
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        ctx.writeAndFlush(Unpooled.copiedBuffer("Netty rocks!",
-                CharsetUtil.UTF_8));
+        // channel链接成功 并 发送消息到服务端
+        ctx.writeAndFlush(Unpooled.copiedBuffer("Netty rocks!", CharsetUtil.UTF_8));
     }
 
     /**
-     * SimpleChannelInboundHandler  自动释放 ByteBuf 的引用
+     * SimpleChannelInboundHandler能自动释放ByteBuf的引用
      */
     @Override
     public void channelRead0(ChannelHandlerContext ctx, ByteBuf in) {
-        System.out.println(
-                "Client received: " + in.toString(CharsetUtil.UTF_8));
+        // 从缓存读取接受的数据
+        // 自动释放缓存ByteBuf in指向的缓存
+        System.out.println("Client received: " + in.toString(CharsetUtil.UTF_8));
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx,
-        Throwable cause) {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         cause.printStackTrace();
         ctx.close();
     }

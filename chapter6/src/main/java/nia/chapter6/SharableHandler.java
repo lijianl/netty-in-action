@@ -9,8 +9,14 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
  *
  * @author <a href="mailto:norman.maurer@gmail.com">Norman Maurer</a>
  */
+
+
+// 可以共享的handler
 @Sharable
 public class SharableHandler extends ChannelInboundHandlerAdapter {
+
+
+    // 保证是线程安全的
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         System.out.println("channel read message " + msg);

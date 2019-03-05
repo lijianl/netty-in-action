@@ -14,21 +14,23 @@ import static org.junit.Assert.*;
  * @author <a href="mailto:norman.maurer@gmail.com">Norman Maurer</a>
  */
 public class AbsIntegerEncoderTest {
+
+
     @Test
     public void testEncoded() {
         ByteBuf buf = Unpooled.buffer();
         for (int i = 1; i < 10; i++) {
+            // 写入9个int
             buf.writeInt(i * -1);
         }
 
-        EmbeddedChannel channel = new EmbeddedChannel(
-            new AbsIntegerEncoder());
+        EmbeddedChannel channel = new EmbeddedChannel(new AbsIntegerEncoder());
         assertTrue(channel.writeOutbound(buf));
         assertTrue(channel.finish());
 
         // read bytes
         for (int i = 1; i < 10; i++) {
-            assertEquals(i, channel.readOutbound());
+            assertEquals(i, (long)channel.readOutbound());
         }
         assertNull(channel.readOutbound());
     }

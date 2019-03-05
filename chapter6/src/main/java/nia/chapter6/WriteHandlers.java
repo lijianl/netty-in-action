@@ -19,6 +19,7 @@ import static io.netty.channel.DummyChannelHandlerContext.DUMMY_INSTANCE;
  * Listing 6.8 Calling ChannelHandlerContext write()
  */
 public class WriteHandlers {
+
     private static final ChannelHandlerContext CHANNEL_HANDLER_CONTEXT_FROM_SOMEWHERE = DUMMY_INSTANCE;
     private static final ChannelPipeline CHANNEL_PIPELINE_FROM_SOMEWHERE = DummyChannelPipeline.DUMMY_INSTANCE;
 
@@ -28,6 +29,9 @@ public class WriteHandlers {
      * */
     public static void writeViaChannel() {
         ChannelHandlerContext ctx = CHANNEL_HANDLER_CONTEXT_FROM_SOMEWHERE; //get reference form somewhere
+
+
+        //channel写数据,看源码=return this.pipeline.write(msg);
         Channel channel = ctx.channel();
         channel.write(Unpooled.copiedBuffer("Netty in Action",
                 CharsetUtil.UTF_8));
@@ -36,12 +40,14 @@ public class WriteHandlers {
 
     /**
      * Listing 6.7 Accessing the ChannelPipeline from a ChannelHandlerContext
+     *
      * */
     public static void writeViaChannelPipeline() {
         ChannelHandlerContext ctx = CHANNEL_HANDLER_CONTEXT_FROM_SOMEWHERE; //get reference form somewhere
+
+        // 传递到尾，看源码=return this.tail.write(msg);
         ChannelPipeline pipeline = ctx.pipeline(); //get reference form somewhere
-        pipeline.write(Unpooled.copiedBuffer("Netty in Action",
-                CharsetUtil.UTF_8));
+        pipeline.write(Unpooled.copiedBuffer("Netty in Action", CharsetUtil.UTF_8));
 
     }
 
@@ -50,6 +56,8 @@ public class WriteHandlers {
      * */
     public static void writeViaChannelHandlerContext() {
         ChannelHandlerContext ctx = CHANNEL_HANDLER_CONTEXT_FROM_SOMEWHERE; //get reference form somewhere;
+
+        // 下一个handler
         ctx.write(Unpooled.copiedBuffer("Netty in Action", CharsetUtil.UTF_8));
     }
 

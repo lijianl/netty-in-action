@@ -18,16 +18,22 @@ import java.util.concurrent.Executors;
  *
  * @author <a href="mailto:norman.maurer@gmail.com">Norman Maurer</a>
  */
+
+
 public class ChannelOperationExamples {
+
     private static final Channel CHANNEL_FROM_SOMEWHERE = new NioSocketChannel();
 
     /**
      * channel 写数据
      */
     public static void writingToChannel() {
-        Channel channel = CHANNEL_FROM_SOMEWHERE; // Get the channel reference from somewhere
+        // Get the channel reference from somewhere
+        Channel channel = CHANNEL_FROM_SOMEWHERE;
+
         ByteBuf buf = Unpooled.copiedBuffer("your data", CharsetUtil.UTF_8);
         ChannelFuture cf = channel.writeAndFlush(buf);
+
         cf.addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) {
@@ -42,13 +48,13 @@ public class ChannelOperationExamples {
     }
 
     /**
-     * 在Server-Channel 使用业务多线程的模式
+     * Channel使用多线程的模式,是线程安全的,消息有序
      */
     public static void writingToChannelFromManyThreads() {
-        final Channel channel = CHANNEL_FROM_SOMEWHERE; // Get the channel reference from somewhere
-        final ByteBuf buf = Unpooled.copiedBuffer("your data",
-                CharsetUtil.UTF_8);
 
+        // Get the channel reference from somewhere
+        final Channel channel = CHANNEL_FROM_SOMEWHERE;
+        final ByteBuf buf = Unpooled.copiedBuffer("your data", CharsetUtil.UTF_8);
 
         Runnable writer = new Runnable() {
             /**
@@ -59,15 +65,9 @@ public class ChannelOperationExamples {
                 channel.write(buf.duplicate());
             }
         };
-
-        /**
-         * 多线程保证写数据的有效性
-         */
         Executor executor = Executors.newCachedThreadPool();
-
         // write in one thread
         executor.execute(writer);
-
         // write in another thread
         executor.execute(writer);
         //...

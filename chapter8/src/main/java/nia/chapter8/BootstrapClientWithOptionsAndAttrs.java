@@ -21,17 +21,27 @@ public class BootstrapClientWithOptionsAndAttrs {
 
     /**
      * Listing 8.7 Using attributes
+     *
+     *
+     * 客户端/服务器属性传递
      * */
     public void bootstrap() {
+
+
+        // 需要传递的属性
         final AttributeKey<Integer> id = AttributeKey.newInstance("ID");
+
         Bootstrap bootstrap = new Bootstrap();
+
+
         bootstrap.group(new NioEventLoopGroup())
             .channel(NioSocketChannel.class)
             .handler(
                 new SimpleChannelInboundHandler<ByteBuf>() {
                     @Override
-                    public void channelRegistered(ChannelHandlerContext ctx)
-                        throws Exception {
+                    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+
+                        // 获取属性
                         Integer idValue = ctx.channel().attr(id).get();
                         // do something with the idValue
                     }
@@ -44,11 +54,18 @@ public class BootstrapClientWithOptionsAndAttrs {
                     }
                 }
             );
+
+
+        // 配置链接属性 => 性能优化
         bootstrap.option(ChannelOption.SO_KEEPALIVE, true)
-            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000);
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000);
+
+        // 属性传递
         bootstrap.attr(id, 123456);
-        ChannelFuture future = bootstrap.connect(
-            new InetSocketAddress("www.manning.com", 80));
+
+
+        // 链接服务器
+        ChannelFuture future = bootstrap.connect(new InetSocketAddress("www.manning.com", 80));
         future.syncUninterruptibly();
     }
 }
