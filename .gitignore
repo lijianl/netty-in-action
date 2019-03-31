@@ -8,3 +8,5 @@ bin
 *.iml
 /.idea
 chapter2/Client/src/main/resources/
+
+a-docs/book
